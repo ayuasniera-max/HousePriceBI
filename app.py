@@ -298,22 +298,39 @@ st.markdown("""
 ml_left, ml_right = st.columns([2, 1])
 
 with ml_left:
-    st.markdown('<div class="prediction-box">', unsafe_allow_html=True)
     st.subheader("Property Input Features")
 
     input_left, input_right = st.columns(2)
 
     with input_left:
+        st.markdown('<div class="prediction-box">', unsafe_allow_html=True)
         living = st.number_input("Living Area (sq ft)", 500, 6000, 1500, 100)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        st.markdown('<div class="prediction-box">', unsafe_allow_html=True)
         bedroom = st.number_input("Bedrooms", 1, 8, 3, 1)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        st.markdown('<div class="prediction-box">', unsafe_allow_html=True)
         age = st.number_input("House Age", 0, 150, 20, 1)
+        st.markdown('</div>', unsafe_allow_html=True)
 
     with input_right:
+        st.markdown('<div class="prediction-box">', unsafe_allow_html=True)
         garage = st.number_input("Garage Cars", 0, 5, 2, 1)
-        quality = st.slider("Overall Quality", 1, 10, 5)
-        st.info("Higher quality and larger living area usually increase the predicted sale price.")
+        st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('<div class="prediction-box">', unsafe_allow_html=True)
+        quality = st.slider("Overall Quality", 1, 10, 5)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        st.markdown("""
+        <div class="prediction-box">
+            <p style="color:#2563eb; font-size:18px;">
+                Higher quality and larger living area usually increase the predicted sale price.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
 
 with ml_right:
     prediction = model.predict([[living, garage, bedroom, quality, age]])
