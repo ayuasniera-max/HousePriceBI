@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 import matplotlib.pyplot as plt
 import seaborn as sns
+from ml_model import model
 
 st.set_page_config(
     page_title="House Price Intelligence Dashboard",
@@ -37,12 +38,12 @@ st.markdown("""
     color: white;
 }
 
-.nav-box {
+.nav-box, .chart-box, .prediction-box {
     background: white;
-    padding: 12px;
-    border-radius: 14px;
+    padding: 18px;
+    border-radius: 18px;
     margin-bottom: 20px;
-    box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.08);
 }
 
 .kpi-card {
@@ -64,12 +65,24 @@ st.markdown("""
     color: #0f172a;
 }
 
-.chart-box {
-    background: white;
-    padding: 18px;
+.prediction-card {
+    background: linear-gradient(135deg, #1d4ed8, #06b6d4);
+    padding: 35px;
     border-radius: 18px;
-    box-shadow: 0px 5px 15px rgba(0,0,0,0.08);
-    margin-bottom: 20px;
+    color: white;
+    text-align: center;
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.18);
+}
+
+.prediction-title {
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+.prediction-value {
+    font-size: 36px;
+    font-weight: 800;
+    margin-top: 10px;
 }
 
 h1, h2, h3 { color: #0f172a; }
@@ -270,3 +283,55 @@ elif page == "Correlation Analysis":
     sns.heatmap(corr, annot=True, ax=ax, cmap="Blues")
     st.pyplot(fig)
     st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+st.markdown("""
+<div class="prediction-box">
+    <h2>Machine Learning Price Prediction</h2>
+    <p style="color:#64748b;">
+        Estimate the expected house price based on key property features using the trained machine learning model.
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
+ml_left, ml_right = st.columns([2, 1])
+
+with ml_left:
+    st.markdown('<div class="prediction-box">', unsafe_allow_html=True)
+    st.subheader("Property Input Features")
+
+    input_left, input_right = st.columns(2)
+
+    with input_left:
+        living = st.number_input("Living Area (sq ft)", 500, 6000, 1500, 100)
+        bedroom = st.number_input("Bedrooms", 1, 8, 3, 1)
+        age = st.number_input("House Age", 0, 150, 20, 1)
+
+    with input_right:
+        garage = st.number_input("Garage Cars", 0, 5, 2, 1)
+        quality = st.slider("Overall Quality", 1, 10, 5)
+        st.info("Higher quality and larger living area usually increase the predicted sale price.")
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with ml_right:
+    prediction = model.predict([[living, garage, bedroom, quality, age]])
+
+    st.markdown(f"""
+    <div class="prediction-card">
+        <div class="prediction-title">Predicted House Price</div>
+        <div class="prediction-value">${prediction[0]:,.0f}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if prediction[0] < 150000:
+        category = "Affordable Property"
+    elif prediction[0] < 300000:
+        category = "Mid-Range Property"
+    elif prediction[0] < 500000:
+        category = "High-Value Property"
+    else:
+        category = "Luxury Property"
+
+    st.success(f"Predicted Category: {category}")
