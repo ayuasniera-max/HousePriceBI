@@ -101,11 +101,15 @@ st.markdown(f"""
 if not filtered_df.empty:
     avg_price = round(filtered_df["SalePrice"].mean(), 0)
     max_price = filtered_df["SalePrice"].max()
+    # 4. Metrics & Figures Pre-calculations
+if not filtered_df.empty:
+    avg_price = round(filtered_df["SalePrice"].mean(), 0)
+    max_price = filtered_df["SalePrice"].max()
     total_house = filtered_df.shape[0]
     avg_age = round(filtered_df["HouseAge"].mean(), 1)
 
     # Cohesive Plotly Themes Using Your Brand Colors
-   color_scale = ["#1e40af", "#3b82f6", "#60a5fa", "#93c5fd", "#cbd5e1"]
+    color_scale = ["#1e40af", "#3b82f6", "#60a5fa", "#93c5fd", "#cbd5e1"]
     
     trend = filtered_df.groupby("YearBuilt")["SalePrice"].mean().reset_index()
     fig1 = px.line(trend, x="YearBuilt", y="SalePrice", title="Historical House Price Trend", template="plotly_white", color_discrete_sequence=["#1e40af"])
@@ -116,6 +120,8 @@ if not filtered_df.empty:
     fig3 = px.pie(filtered_df, names="PriceCategory", title="Market Property Distribution", template="plotly_white", color_discrete_sequence=color_scale)
     
     fig4 = px.scatter(filtered_df, x="GrLivArea", y="SalePrice", color="PriceCategory", title="Living Area vs Sale Price", template="plotly_white", color_discrete_sequence=color_scale)
+    
+    fig5 = px.histogram(filtered_df, x="HouseStyle", color="PriceCategory", title="House Style Distribution by Price Class", template="plotly_white", color_discrete_sequence=color_scale)
     
     fig5 = px.histogram(filtered_df, x="HouseStyle", color="PriceCategory", title="House Style Distribution by Price Class", template="plotly_white", color_discrete_sequence=color_scale)
 
