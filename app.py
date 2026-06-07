@@ -384,17 +384,10 @@ with ml_right:
         [[living, garage, bedroom, quality, age]]
     )
 
-    st.markdown(f"""
-    <div class="prediction-card">
-        <div class="prediction-title">
-            Predicted House Price
-        </div>
-
-        <div class="prediction-value">
-            ${prediction[0]:,.0f}
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    st.metric(
+        label="Estimated Value",
+        value=f"${prediction[0]:,.0f}"
+    )
 
     if prediction[0] < 150000:
         category = "Affordable Property"
@@ -405,25 +398,16 @@ with ml_right:
     else:
         category = "Luxury Property"
 
-    st.markdown(f"""
-    <div style="
-        background:white;
-        padding:20px;
-        border-radius:18px;
-        margin-top:15px;
-        text-align:center;
-        box-shadow:0px 5px 15px rgba(0,0,0,0.08);
-    ">
-        <h4 style="margin-bottom:10px;">
-            Property Category
-        </h4>
+    st.markdown("### Property Category")
 
-        <div style="
-            font-size:22px;
-            font-weight:700;
-            color:#16a34a;
-        ">
-            {category}
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    if category == "Affordable Property":
+        st.success(category)
+
+    elif category == "Mid-Range Property":
+        st.info(category)
+
+    elif category == "High-Value Property":
+        st.warning(category)
+
+    else:
+        st.error(category)
