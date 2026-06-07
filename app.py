@@ -105,7 +105,7 @@ if not filtered_df.empty:
     avg_age = round(filtered_df["HouseAge"].mean(), 1)
 
     # Cohesive Plotly Themes Using Your Brand Colors
-    color_scale = ["#1e40af", #3b82f6, #60a5fa, #93c5fd, #cbd5e1]
+   color_scale = ["#1e40af", "#3b82f6", "#60a5fa", "#93c5fd", "#cbd5e1"]
     
     trend = filtered_df.groupby("YearBuilt")["SalePrice"].mean().reset_index()
     fig1 = px.line(trend, x="YearBuilt", y="SalePrice", title="Historical House Price Trend", template="plotly_white", color_discrete_sequence=["#1e40af"])
