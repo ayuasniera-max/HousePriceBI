@@ -414,4 +414,16 @@ with ml_right:
         text-align:center;
         box-shadow:0px 5px 15px rgba(0,0,0,0.08);
     ">
-     
+        <h4 style="margin-bottom:10px;">
+            Property Category
+        </h4>
+
+        <div style="
+            font-size:22px;
+            font-weight:700;
+            color:#16a34a;
+        ">
+            {category}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
