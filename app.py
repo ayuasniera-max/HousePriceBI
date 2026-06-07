@@ -284,7 +284,11 @@ elif page == "Correlation Analysis":
     st.pyplot(fig)
     st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
+# ===============================
+# MACHINE LEARNING PREDICTION
+# ===============================
+
+st.markdown("<hr>", unsafe_allow_html=True)
 
 st.markdown("""
 <div class="prediction-box">
@@ -295,50 +299,100 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-ml_left, ml_right = st.columns([2, 1])
+ml_left, ml_right = st.columns([3, 1])
 
 with ml_left:
+
     st.subheader("Property Input Features")
 
-    input_left, input_right = st.columns(2)
+    col1, col2 = st.columns(2)
 
-    with input_left:
-        st.markdown('<div class="prediction-box">', unsafe_allow_html=True)
-        living = st.number_input("Living Area (sq ft)", 500, 6000, 1500, 100)
-        st.markdown('</div>', unsafe_allow_html=True)
+    with col1:
 
-        st.markdown('<div class="prediction-box">', unsafe_allow_html=True)
-        bedroom = st.number_input("Bedrooms", 1, 8, 3, 1)
-        st.markdown('</div>', unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown("#### Living Area")
+            living = st.slider(
+                "Living Area (sq ft)",
+                min_value=500,
+                max_value=6000,
+                value=1500,
+                step=100,
+                label_visibility="collapsed"
+            )
+            st.caption(f"{living:,} sq ft")
 
-        st.markdown('<div class="prediction-box">', unsafe_allow_html=True)
-        age = st.number_input("House Age", 0, 150, 20, 1)
-        st.markdown('</div>', unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown("#### Bedrooms")
+            bedroom = st.slider(
+                "Bedrooms",
+                min_value=1,
+                max_value=8,
+                value=3,
+                label_visibility="collapsed"
+            )
+            st.caption(f"{bedroom} Bedrooms")
 
-    with input_right:
-        st.markdown('<div class="prediction-box">', unsafe_allow_html=True)
-        garage = st.number_input("Garage Cars", 0, 5, 2, 1)
-        st.markdown('</div>', unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown("#### House Age")
+            age = st.slider(
+                "House Age",
+                min_value=0,
+                max_value=150,
+                value=20,
+                label_visibility="collapsed"
+            )
+            st.caption(f"{age} Years")
 
-        st.markdown('<div class="prediction-box">', unsafe_allow_html=True)
-        quality = st.slider("Overall Quality", 1, 10, 5)
-        st.markdown('</div>', unsafe_allow_html=True)
+    with col2:
 
-        st.markdown("""
-        <div class="prediction-box">
-            <p style="color:#2563eb; font-size:18px;">
-                Higher quality and larger living area usually increase the predicted sale price.
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown("#### Garage Capacity")
+            garage = st.slider(
+                "Garage Cars",
+                min_value=0,
+                max_value=5,
+                value=2,
+                label_visibility="collapsed"
+            )
+            st.caption(f"{garage} Cars")
+
+        with st.container(border=True):
+            st.markdown("#### Overall Quality")
+            quality = st.slider(
+                "Overall Quality",
+                min_value=1,
+                max_value=10,
+                value=5,
+                label_visibility="collapsed"
+            )
+            st.caption(f"Quality Score: {quality}/10")
+
+        with st.container(border=True):
+            st.markdown("""
+            ### Market Insight
+
+            Higher quality homes and larger living areas generally
+            command higher selling prices.
+
+            Use the controls on the left to explore how property
+            features influence the predicted market value.
+            """)
 
 with ml_right:
-    prediction = model.predict([[living, garage, bedroom, quality, age]])
+
+    prediction = model.predict(
+        [[living, garage, bedroom, quality, age]]
+    )
 
     st.markdown(f"""
     <div class="prediction-card">
-        <div class="prediction-title">Predicted House Price</div>
-        <div class="prediction-value">${prediction[0]:,.0f}</div>
+        <div class="prediction-title">
+            Predicted House Price
+        </div>
+
+        <div class="prediction-value">
+            ${prediction[0]:,.0f}
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -351,4 +405,25 @@ with ml_right:
     else:
         category = "Luxury Property"
 
-    st.success(f"Predicted Category: {category}")
+    st.markdown(f"""
+    <div style="
+        background:white;
+        padding:20px;
+        border-radius:18px;
+        margin-top:15px;
+        text-align:center;
+        box-shadow:0px 5px 15px rgba(0,0,0,0.08);
+    ">
+        <h4 style="margin-bottom:10px;">
+            Property Category
+        </h4>
+
+        <div style="
+            font-size:22px;
+            font-weight:700;
+            color:#16a34a;
+        ">
+            {category}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
