@@ -66,7 +66,14 @@ st.sidebar.title("🏡 House BI")
 st.sidebar.markdown("---")
 page = st.sidebar.radio(
     "Navigation",
-    ["Overview Dashboard", "Price Trends", "Neighborhood Insights", "Property Features", "ML Price Predictor"]
+    [
+        "Overview Dashboard",
+        "Price Trends",
+        "Neighborhood Insights",
+        "Property Features",
+        "OLAP Analysis",
+        "ML Price Predictor"
+    ]
 )
 
 st.sidebar.markdown("---")
@@ -179,6 +186,139 @@ elif page == "Property Features":
         fig.patch.set_facecolor('None') # Make matplotlib background transparent to fit clean card
         st.pyplot(fig)
         st.markdown('</div>', unsafe_allow_html=True)
+
+elif page == "OLAP Analysis":
+
+    st.markdown("""
+    <div class="prediction-box">
+        <h3 style="margin-top:0;">OLAP Analysis</h3>
+        <p style="color:#64748b;">
+        Online Analytical Processing (OLAP) operations for multidimensional
+        house price analysis.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # =========================
+    # ROLL UP
+    # =========================
+    st.subheader("Roll-Up Analysis")
+
+    rollup = (
+        df.groupby("PriceCategory")["SalePrice"]
+        .mean()
+        .reset_index()
+    )
+
+    st.dataframe(
+        rollup,
+        use_container_width=True
+    )
+
+    fig_rollup = px.bar(
+        rollup,
+        x="PriceCategory",
+        y="SalePrice",
+        title="Average Sale Price by Price Category",
+        color="PriceCategory",
+        template="plotly_white"
+    )
+
+    st.plotly_chart(
+        fig_rollup,
+        use_container_width=True
+    )
+
+    st.markdown("---")
+
+    # =========================
+    # DRILL DOWN
+    # =========================
+    st.subheader("Drill-Down Analysis")
+
+    drill = (
+        df.groupby(
+            ["Neighborhood", "HouseStyle"]
+        )["SalePrice"]
+        .mean()
+        .reset_index()
+    )
+
+    st.dataframe(
+        drill.head(20),
+        use_container_width=True
+    )
+
+    fig_drill = px.bar(
+        drill.head(20),
+        x="Neighborhood",
+        y="SalePrice",
+        color="HouseStyle",
+        title="Average Sale Price by Neighborhood and House Style",
+        template="plotly_white"
+    )
+
+    st.plotly_chart(
+        fig_drill,
+        use_container_width=True
+    )
+
+    st.markdown("---")
+
+# =========================
+# SLICE
+# =========================
+st.subheader("Slice Operation")
+
+selected_slice = st.selectbox(
+    "Select Price Category",
+    sorted(df["PriceCategory"].unique())
+)
+
+slice_data = df[
+    df["PriceCategory"] == selected_slice
+]
+
+st.write(
+    f"Showing only houses in the '{selected_slice}' category."
+)
+
+st.dataframe(
+    slice_data[
+        ["SalePrice", "Neighborhood", "HouseStyle"]
+    ].head(20),
+    use_container_width=True
+)
+
+st.subheader("Dice Operation")
+
+selected_neighborhood = st.selectbox(
+    "Select Neighborhood",
+    sorted(df["Neighborhood"].unique())
+)
+
+selected_price_dice = st.selectbox(
+    "Select Price Category",
+    sorted(df["PriceCategory"].unique()),
+    key="dice_price"
+)
+
+dice_data = df[
+    (df["Neighborhood"] == selected_neighborhood)
+    &
+    (df["PriceCategory"] == selected_price_dice)
+]
+
+st.write(
+    f"Showing houses where Neighborhood = {selected_neighborhood} and Price Category = {selected_price_dice}."
+)
+
+st.dataframe(
+    dice_data[
+        ["SalePrice", "Neighborhood", "PriceCategory", "HouseStyle"]
+    ].head(20),
+    use_container_width=True
+)
 
 elif page == "ML Price Predictor":
     st.markdown("""
