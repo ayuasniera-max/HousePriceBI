@@ -104,10 +104,6 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# 4. Metrics & Figures Pre-calculations
-if not filtered_df.empty:
-    avg_price = round(filtered_df["SalePrice"].mean(), 0)
-    max_price = filtered_df["SalePrice"].max()
     # 4. Metrics & Figures Pre-calculations
 if not filtered_df.empty:
     avg_price = round(filtered_df["SalePrice"].mean(), 0)
@@ -219,8 +215,8 @@ elif page == "OLAP Analysis":
         rollup,
         x="PriceCategory",
         y="SalePrice",
-        title="Average Sale Price by Price Category",
         color="PriceCategory",
+        title="Average Sale Price by Price Category",
         template="plotly_white"
     )
 
@@ -265,60 +261,70 @@ elif page == "OLAP Analysis":
 
     st.markdown("---")
 
-# =========================
-# SLICE
-# =========================
-st.subheader("Slice Operation")
+    # =========================
+    # SLICE
+    # =========================
+    st.subheader("Slice Operation")
 
-selected_slice = st.selectbox(
-    "Select Price Category",
-    sorted(df["PriceCategory"].unique())
-)
+    selected_slice = st.selectbox(
+        "Select Price Category",
+        sorted(df["PriceCategory"].unique())
+    )
 
-slice_data = df[
-    df["PriceCategory"] == selected_slice
-]
+    slice_data = df[
+        df["PriceCategory"] == selected_slice
+    ]
 
-st.write(
-    f"Showing only houses in the '{selected_slice}' category."
-)
+    st.write(
+        f"Showing only houses in the '{selected_slice}' category."
+    )
 
-st.dataframe(
-    slice_data[
-        ["SalePrice", "Neighborhood", "HouseStyle"]
-    ].head(20),
-    use_container_width=True
-)
+    st.dataframe(
+        slice_data[
+            ["SalePrice", "Neighborhood", "HouseStyle"]
+        ].head(20),
+        use_container_width=True
+    )
 
-st.subheader("Dice Operation")
+    st.markdown("---")
 
-selected_neighborhood = st.selectbox(
-    "Select Neighborhood",
-    sorted(df["Neighborhood"].unique())
-)
+    # =========================
+    # DICE
+    # =========================
+    st.subheader("Dice Operation")
 
-selected_price_dice = st.selectbox(
-    "Select Price Category",
-    sorted(df["PriceCategory"].unique()),
-    key="dice_price"
-)
+    selected_neighborhood = st.selectbox(
+        "Select Neighborhood",
+        sorted(df["Neighborhood"].unique())
+    )
 
-dice_data = df[
-    (df["Neighborhood"] == selected_neighborhood)
-    &
-    (df["PriceCategory"] == selected_price_dice)
-]
+    selected_price_dice = st.selectbox(
+        "Select Price Category",
+        sorted(df["PriceCategory"].unique()),
+        key="dice_price"
+    )
 
-st.write(
-    f"Showing houses where Neighborhood = {selected_neighborhood} and Price Category = {selected_price_dice}."
-)
+    dice_data = df[
+        (df["Neighborhood"] == selected_neighborhood)
+        &
+        (df["PriceCategory"] == selected_price_dice)
+    ]
 
-st.dataframe(
-    dice_data[
-        ["SalePrice", "Neighborhood", "PriceCategory", "HouseStyle"]
-    ].head(20),
-    use_container_width=True
-)
+    st.write(
+        f"Showing houses where Neighborhood = {selected_neighborhood} and Price Category = {selected_price_dice}."
+    )
+
+    st.dataframe(
+        dice_data[
+            [
+                "SalePrice",
+                "Neighborhood",
+                "PriceCategory",
+                "HouseStyle"
+            ]
+        ].head(20),
+        use_container_width=True
+    )
 
 elif page == "ML Price Predictor":
     st.markdown("""
